@@ -11,8 +11,8 @@
 #define WIFI_SSID ""
 #define WIFI_PASSWORD ""
 #define WIFI_TIMEOUT 10000               // 10 seconds
-#define AP_SSID "ESP32-MCP-Server"
-#define AP_PASSWORD "esp32mcp123"
+#define AP_SSID "psAI-Ducky"
+#define AP_PASSWORD "psai-ducky"
 
 #ifdef __has_include
 #  if __has_include("config/wifi_credentials.h")
