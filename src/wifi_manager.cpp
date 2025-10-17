@@ -329,8 +329,8 @@ String WiFiManager::macTail() {
 }
 
 String WiFiManager::computeHostname() {
-    String tail = macTail();
-    String host = String(HOSTNAME_PREFIX) + "-" + tail;
+    // Use a fixed, branded hostname
+    String host = String(HOSTNAME_PREFIX);
     host.toLowerCase();
     return host;
 }
