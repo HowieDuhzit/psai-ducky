@@ -62,6 +62,20 @@ Add to `~/.config/claude-desktop/config.json`:
   echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{"tools":true}}}' | node index.js
   ```
 
+## Examples
+- Full chat typing and send:
+  ```bash
+  node examples/full_chat_test.js
+  ```
+- Mouse exercise:
+  ```bash
+  node examples/mouse_test.js
+  ```
+- Direct HID typing:
+  ```bash
+  node examples/test_esp32_hid.js
+  ```
+
 ## Project layout
 ```
 ESPCP/

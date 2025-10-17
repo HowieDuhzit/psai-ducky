@@ -39,3 +39,11 @@ test/
 # Temporary files
 *.tmp
 *.temp
+
+# Node
+node_modules/
+.npmrc
+.env
+
+# Examples artifacts
+examples/*.log

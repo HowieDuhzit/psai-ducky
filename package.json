@@ -4,7 +4,8 @@
   "description": "psAI-Ducky: ESP32-S2 HID bridge with MCP for AI-driven USB Rubber Ducky-style control",
   "main": "index.js",
   "bin": {
-    "esp32-hid-mcp": "./index.js"
+    "esp32-hid-mcp": "./index.js",
+    "psai-ducky": "./index.js"
   },
   "scripts": {
     "start": "node index.js",
