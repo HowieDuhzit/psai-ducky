@@ -1,0 +1,40 @@
+{
+  "name": "psai-ducky",
+  "version": "1.0.0",
+  "description": "psAI-Ducky: ESP32-S2 HID bridge with MCP for AI-driven USB Rubber Ducky-style control",
+  "main": "index.js",
+  "bin": {
+    "esp32-hid-mcp": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "mcp",
+    "esp32",
+    "hid",
+    "keyboard",
+    "mouse",
+    "remote-control",
+    "llm",
+    "claude",
+    "websocket"
+  ],
+  "author": "Howie Duhzit",
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.14.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/esp32-hid-mcp-server.git"
+  },
+  "homepage": "https://github.com/howieduhzit/psai-ducky#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/esp32-hid-mcp-server/issues"
+  }
+}
