@@ -68,7 +68,13 @@ psAI-Ducky — ESP32-S2 HID MCP Bridge
 #include "config.h"
 #include "mcp_server.h"
 #include "hid_controller.h"
+#include "ble_hid_controller.h"
 #include "wifi_manager.h"
+#include "ota_manager.h"
+#include "web_server.h"
+#include "gamepad_controller.h"
+#include "macro_manager.h"
+#include "keyboard_layout.h"
 
 // Global objects
 WebSocketsServer webSocket(MCP_SERVER_PORT);
@@ -81,6 +87,16 @@ USBHIDMouse mouse;
 // MCP and HID controllers
 MCPServer mcpServer(&webSocket);
 WiFiManager wifiManager;
+OTAManager otaManager;
+ConfigWebServer webServer(80);
+GamepadController gamepadController;
+MacroManager macroManager;
+KeyboardLayoutManager layoutManager;
+
+#if !HAVE_NATIVE_USB
+// BLE HID for non-USB boards
+BLEHIDController bleHIDController("psAI-Ducky");
+#endif
 
 void setup() {
     // Initialize Serial for debugging
@@ -119,11 +135,43 @@ void setup() {
     }
     
 #if HAVE_NATIVE_USB
-    // Initialize HID controller
+    // Initialize USB HID controller
     static HIDController hidController(&keyboard, &mouse);
     hidController.begin();
     mcpServer.setHIDController(&hidController);
+#else
+    // Initialize BLE HID controller for non-USB boards
+    bleHIDController.begin();
+    // TODO: Integrate BLE HID with MCP server
 #endif
+
+    // Initialize OTA after WiFi is connected
+    Serial.println("Initializing OTA Manager...");
+    otaManager.begin("psai-ducky", nullptr);  // No password by default
+    Serial.println("OTA Manager initialized");
+    Serial.println("OTA updates available via Arduino IDE or platformio");
+    
+    // Initialize web server
+    Serial.println("Initializing Web Server...");
+    webServer.begin();
+    Serial.println("Web Server initialized");
+    
+    // Initialize gamepad controller
+#if HAVE_NATIVE_USB
+    Serial.println("Initializing Gamepad Controller...");
+    gamepadController.begin();
+    Serial.println("Gamepad Controller initialized");
+#endif
+    
+    // Initialize macro manager
+    Serial.println("Initializing Macro Manager...");
+    macroManager.begin();
+    Serial.println("Macro Manager initialized");
+    
+    // Initialize keyboard layout manager
+    Serial.println("Initializing Keyboard Layout Manager...");
+    layoutManager.begin();
+    Serial.println("Keyboard Layout Manager initialized");
 
     // Initialize MCP Server
     Serial.println("Initializing MCP Server...");
@@ -142,6 +190,15 @@ void loop() {
     
     // Handle WiFi management
     wifiManager.loop();
+    
+    // Handle OTA updates
+    otaManager.loop();
+    
+    // Handle web server
+    webServer.loop();
+    
+    // Handle macro playback
+    macroManager.update();
     
     // Handle MCP server tasks
     mcpServer.loop();
