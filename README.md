@@ -78,14 +78,64 @@ Add to `~/.config/claude-desktop/config.json`:
 
 ## Board support matrix
 
-| Board                         | USB HID | Builds | Tested | Notes |
-|-------------------------------|---------|--------|--------|-------|
-| ESP32-S2 Saola-1              | Yes     | Yes    | Yes    | Native USB, full HID (this repo’s reference) |
-| ESP32-S3 DevKitC-1            | Yes     | Yes    | Pending| Native USB; should work identically |
-| ESP32 DevKit (WROOM-32)       | No      | Yes    | N/A    | No native USB; BLE HID planned |
-| ESP32-C3 DevKitM-1            | No      | Yes    | N/A    | USB-Serial/JTAG only; BLE HID planned |
+### ESP32-S2 Boards (Native USB HID Support) ✅
 
-PRs welcome for additional boards. For non-native USB targets, HID is stubbed (MCP still works for status).
+| Board                         | PlatformIO Env         | USB HID | Build Status | Tested | Notes |
+|-------------------------------|------------------------|---------|--------------|--------|-------|
+| **Flipper Zero WiFi Dev**     | `esp32-s2-flipper`     | ✅ Yes   | ![Build][flipper] | ✅ Yes  | **Primary test board** |
+| ESP32-S2 Saola-1              | `esp32-s2-saola-1`     | ✅ Yes   | ![Build][s2-saola] | ✅ Yes  | Reference design |
+| ESP32-S2 DevKitM-1            | `esp32-s2-devkitm-1`   | ✅ Yes   | ![Build][s2-devkitm] | ⏳ Pending | Standard dev board |
+| Adafruit Feather ESP32-S2     | `adafruit_feather_esp32s2` | ✅ Yes | ![Build][ada-s2] | ⏳ Pending | Compact feather form |
+| Unexpected Maker FeatherS2    | `um_feathers2`         | ✅ Yes   | ![Build][um-s2] | ⏳ Pending | Premium S2 board |
+
+### ESP32-S3 Boards (Native USB HID Support) ✅
+
+| Board                         | PlatformIO Env         | USB HID | Build Status | Tested | Notes |
+|-------------------------------|------------------------|---------|--------------|--------|-------|
+| ESP32-S3 DevKitC-1            | `esp32-s3-devkitc-1`   | ✅ Yes   | ![Build][s3-devkitc] | ⏳ Pending | Standard S3 dev board |
+| ESP32-S3 DevKitC-1 (8MB+8MB)  | `esp32-s3-devkitc-1-n8r8` | ✅ Yes | ![Build][s3-n8r8] | ⏳ Pending | With PSRAM |
+| Adafruit Feather ESP32-S3     | `adafruit_feather_esp32s3` | ✅ Yes | ![Build][ada-s3] | ⏳ Pending | Compact feather form |
+| Unexpected Maker TinyS3       | `um_tinys3`            | ✅ Yes   | ![Build][um-tinys3] | ⏳ Pending | Tiny S3 board |
+| LilyGo T-Display-S3           | `lilygo-t-display-s3`  | ✅ Yes   | ![Build][lilygo-s3] | ⏳ Pending | With built-in display |
+
+### ESP32 Classic & C3/C6 Boards (No Native USB HID) ⚠️
+
+| Board                         | PlatformIO Env         | USB HID | Build Status | Tested | Notes |
+|-------------------------------|------------------------|---------|--------------|--------|-------|
+| ESP32 DevKit (WROOM-32)       | `esp32dev`             | ❌ No    | ![Build][esp32] | N/A | BLE HID planned |
+| ESP32-C3 DevKitM-1            | `esp32-c3-devkitm-1`   | ❌ No    | ![Build][c3-m1] | N/A | USB-Serial/JTAG only |
+| ESP32-C3 DevKitC-02           | `esp32-c3-devkitc-02`  | ❌ No    | ![Build][c3-c02] | N/A | USB-Serial/JTAG only |
+| Seeed XIAO ESP32-C3           | `seeed_xiao_esp32c3`   | ❌ No    | ![Build][xiao-c3] | N/A | Tiny form factor |
+| ESP32-C6 DevKitC-1            | `esp32-c6-devkitc-1`   | ❌ No    | ![Build][c6] | N/A | Newest chip, BLE planned |
+
+**Legend:**
+- ✅ = Fully supported
+- ⏳ = Not yet tested on hardware (builds successfully)
+- ❌ = Not supported (use BLE HID when implemented)
+- ![Build][badge] = Build status from GitHub Actions
+
+**Note:** For non-native USB targets, HID functionality is stubbed. MCP server still works for status monitoring. BLE HID support is planned for future releases.
+
+**Want to contribute?** PRs welcome for:
+- Testing builds on untested boards
+- Adding new board support
+- Implementing BLE HID for non-USB boards
+
+[flipper]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[s2-saola]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[s2-devkitm]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[ada-s2]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[um-s2]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[s3-devkitc]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[s3-n8r8]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[ada-s3]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[um-tinys3]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[lilygo-s3]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[esp32]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[c3-m1]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[c3-c02]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[xiao-c3]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
+[c6]: https://github.com/HowieDuhzit/psai-ducky/actions/workflows/build.yml/badge.svg?branch=dev
 
 ## Project layout
 ```
