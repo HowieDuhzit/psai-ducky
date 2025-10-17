@@ -2,19 +2,18 @@
 #include "config.h"
 #include <ArduinoJson.h>
 
-HIDController::HIDController(USBHIDKeyboard* kb, USBHIDMouse* ms) 
-    : keyboard(kb), mouse(ms), isInitialized(false) {
-}
+#if HAVE_NATIVE_USB
 
-HIDController::~HIDController() {
-}
+HIDController::HIDController(USBHIDKeyboard* kb, USBHIDMouse* ms) 
+    : keyboard(kb), mouse(ms), isInitialized(false) {}
+
+HIDController::~HIDController() {}
 
 bool HIDController::begin() {
     if (!keyboard || !mouse) {
         DEBUG_PRINTLN("HID devices not initialized");
         return false;
     }
-    
     isInitialized = true;
     DEBUG_PRINTLN("HID Controller initialized");
     return true;
@@ -258,3 +257,5 @@ uint8_t HIDController::mapMouseButton(const String& buttonName) {
     if (buttonName == "middle") return MOUSE_MIDDLE;
     return MOUSE_LEFT; // Default
 }
+
+#endif // HAVE_NATIVE_USB

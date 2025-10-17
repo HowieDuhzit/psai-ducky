@@ -76,6 +76,17 @@ Add to `~/.config/claude-desktop/config.json`:
   node examples/test_esp32_hid.js
   ```
 
+## Board support matrix
+
+| Board                         | USB HID | Builds | Tested | Notes |
+|-------------------------------|---------|--------|--------|-------|
+| ESP32-S2 Saola-1              | Yes     | Yes    | Yes    | Native USB, full HID (this repo’s reference) |
+| ESP32-S3 DevKitC-1            | Yes     | Yes    | Pending| Native USB; should work identically |
+| ESP32 DevKit (WROOM-32)       | No      | Yes    | N/A    | No native USB; BLE HID planned |
+| ESP32-C3 DevKitM-1            | No      | Yes    | N/A    | USB-Serial/JTAG only; BLE HID planned |
+
+PRs welcome for additional boards. For non-native USB targets, HID is stubbed (MCP still works for status).
+
 ## Project layout
 ```
 ESPCP/

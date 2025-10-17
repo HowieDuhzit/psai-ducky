@@ -2,8 +2,6 @@
 #define HID_CONTROLLER_H
 
 #include <Arduino.h>
-#include "USBHIDKeyboard.h"
-#include "USBHIDMouse.h"
 
 // Mouse button definitions
 #define MOUSE_LEFT 0x01
@@ -16,13 +14,16 @@
 #define KEY_ALT 0x04
 #define KEY_GUI 0x08
 
+#if HAVE_NATIVE_USB
+#include "USBHIDKeyboard.h"
+#include "USBHIDMouse.h"
+
 class HIDController {
 private:
     USBHIDKeyboard* keyboard;
     USBHIDMouse* mouse;
     bool isInitialized;
     
-    // Key mapping functions
     uint8_t mapSpecialKey(const String& keyName);
     uint8_t mapMouseButton(const String& buttonName);
     
@@ -60,5 +61,35 @@ public:
     void reset();
     String getStatus();
 };
+
+#else
+// Stub implementation for boards without native USB (build only)
+class HIDController {
+public:
+    HIDController(void*, void*) {}
+    ~HIDController() {}
+    bool begin() { return false; }
+    bool typeText(const String&) { return false; }
+    bool pressKey(uint8_t, uint8_t = 0) { return false; }
+    bool releaseKey(uint8_t, uint8_t = 0) { return false; }
+    bool sendKeyStroke(uint8_t, uint8_t = 0) { return false; }
+    bool sendKeyStroke(const String&, const String& = "") { return false; }
+    bool sendKeySequence(const String&) { return false; }
+    bool sendCtrlC() { return false; }
+    bool sendCtrlV() { return false; }
+    bool sendCtrlZ() { return false; }
+    bool sendAltTab() { return false; }
+    bool sendWinKey() { return false; }
+    bool moveMouse(int16_t, int16_t, bool = true) { return false; }
+    bool clickMouse(uint8_t = MOUSE_LEFT, uint16_t = 50) { return false; }
+    bool doubleClickMouse(uint8_t = MOUSE_LEFT) { return false; }
+    bool pressMouse(uint8_t) { return false; }
+    bool releaseMouse(uint8_t) { return false; }
+    bool scrollMouse(int8_t) { return false; }
+    bool isReady() { return false; }
+    void reset() {}
+    String getStatus() { return String("{\"initialized\":false}"); }
+};
+#endif
 
 #endif // HID_CONTROLLER_H

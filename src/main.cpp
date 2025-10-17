@@ -58,9 +58,12 @@ psAI-Ducky — ESP32-S2 HID MCP Bridge
 #include <WiFi.h>
 #include <WebSocketsServer.h>
 #include <ArduinoJson.h>
+
+#if HAVE_NATIVE_USB
 #include "USB.h"
 #include "USBHIDKeyboard.h"
 #include "USBHIDMouse.h"
+#endif
 
 #include "config.h"
 #include "mcp_server.h"
@@ -69,12 +72,14 @@ psAI-Ducky — ESP32-S2 HID MCP Bridge
 
 // Global objects
 WebSocketsServer webSocket(MCP_SERVER_PORT);
+
+#if HAVE_NATIVE_USB
 USBHIDKeyboard keyboard;
 USBHIDMouse mouse;
+#endif
 
 // MCP and HID controllers
 MCPServer mcpServer(&webSocket);
-HIDController hidController(&keyboard, &mouse);
 WiFiManager wifiManager;
 
 void setup() {
@@ -84,11 +89,13 @@ void setup() {
     Serial.println("ESP32 MCP Server MINIMAL TEST starting...");
     Serial.flush();
     
+#if HAVE_NATIVE_USB
     // Initialize native USB and HID
     Serial.println("Initializing USB HID...");
     USB.begin();
     keyboard.begin();
     mouse.begin();
+#endif
 
     // Initialize WiFi Manager
     Serial.println("Initializing WiFi Manager...");
@@ -111,9 +118,12 @@ void setup() {
         Serial.printf("MAC Address: %s\n", WiFi.macAddress().c_str());
     }
     
+#if HAVE_NATIVE_USB
     // Initialize HID controller
+    static HIDController hidController(&keyboard, &mouse);
     hidController.begin();
     mcpServer.setHIDController(&hidController);
+#endif
 
     // Initialize MCP Server
     Serial.println("Initializing MCP Server...");
