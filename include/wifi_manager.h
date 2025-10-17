@@ -28,6 +28,10 @@ private:
     void saveWiFiCredentials(const String& ssid, const String& password);
     bool saveWiFiCredentialsWithVerification(const String& ssid, const String& password);
     bool loadWiFiCredentials(String& ssid, String& password);
+
+    // Hostname helpers
+    String computeHostname();
+    String macTail();
     
 public:
     WiFiManager();
@@ -49,6 +53,9 @@ public:
     // Configuration
     void resetCredentials();
     void setConnectionTimeout(unsigned long timeout);
+    
+    // Branding
+    String getHostname() { return computeHostname(); }
 };
 
 #endif // WIFI_MANAGER_H

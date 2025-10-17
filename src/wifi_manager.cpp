@@ -2,6 +2,7 @@
 #include "config.h"
 #include <EEPROM.h>
 #include <ArduinoJson.h>
+#include <ESPmDNS.h>
 
 #define EEPROM_SIZE 512
 #define SSID_ADDR 0
@@ -22,11 +23,19 @@ WiFiManager::~WiFiManager() {
 
 bool WiFiManager::begin() {
     EEPROM.begin(EEPROM_SIZE);
+
+    // Compute and set branded hostname (STA mode)
+    String hostname = computeHostname();
     WiFi.mode(WIFI_STA);
-    
+    WiFi.setHostname(hostname.c_str());
+
+    // Start mDNS for easier discovery (optional)
+    MDNS.begin(hostname.c_str());
+
     // Debug: Check EEPROM status
     DEBUG_PRINTF("EEPROM initialized, magic value: 0x%X\n", EEPROM.readUShort(MAGIC_ADDR));
-    
+    DEBUG_PRINTF("Hostname set: %s\n", hostname.c_str());
+
     return true;
 }
 
@@ -93,9 +102,22 @@ void WiFiManager::startAccessPoint() {
     DEBUG_PRINTLN("Starting Access Point mode");
     
     WiFi.mode(WIFI_AP);
+    String hostname = computeHostname();
     WiFi.softAP(AP_SSID, AP_PASSWORD);
-    
+    // Attempt to set AP hostname if supported
+    #ifdef ARDUINO
+    #if defined(ESP_ARDUINO_VERSION)
+    // Some cores provide softAPsetHostname
+    #if __has_include(<esp_wifi.h>)
+    // Best-effort: not all cores expose this API
+    #endif
+    #endif
+    #endif
+    // mDNS in AP mode (may not be available on all OSes)
+    MDNS.begin(hostname.c_str());
+
     DEBUG_PRINTF("AP started: %s\n", AP_SSID);
+    DEBUG_PRINTF("AP hostname: %s\n", hostname.c_str());
     DEBUG_PRINTF("AP IP: %s\n", WiFi.softAPIP().toString().c_str());
     
     setupConfigPortal();
@@ -241,7 +263,10 @@ String WiFiManager::generateConfigHTML() {
     html += F("</div>");
     html += F("<div><strong>AP IP</strong><br>");
     html += WiFi.softAPIP().toString();
-    html += F("</div></div>");
+    html += F("</div>");
+    html += F("<div><strong>Hostname</strong><br>");
+    html += computeHostname();
+    html += F(".local</div></div>");
 
     html += F("</div>"); // content
 
@@ -278,6 +303,7 @@ String WiFiManager::generateDebugHTML() {
     if (WiFi.status() == WL_CONNECTED) {
         html += F("<div>Connected SSID</div><div>"); html += WiFi.SSID(); html += F("</div>");
         html += F("<div>IP Address</div><div>"); html += WiFi.localIP().toString(); html += F("</div>");
+        html += F("<div>Hostname</div><div>"); html += computeHostname(); html += F(".local</div>");
         html += F("<div>RSSI</div><div>"); html += String(WiFi.RSSI()); html += F(" dBm</div>");
     } else {
         html += F("<div>AP SSID</div><div>"); html += AP_SSID; html += F("</div>");
@@ -289,6 +315,24 @@ String WiFiManager::generateDebugHTML() {
     html += F("</div></body></html>");
 
     return html;
+}
+
+// Hostname helpers
+String WiFiManager::macTail() {
+    uint8_t mac[6];
+    esp_read_mac(mac, ESP_MAC_WIFI_STA);
+    char buf[5];
+    snprintf(buf, sizeof(buf), "%02x%02x", mac[4], mac[5]);
+    String s(buf);
+    s.toLowerCase();
+    return s;
+}
+
+String WiFiManager::computeHostname() {
+    String tail = macTail();
+    String host = String(HOSTNAME_PREFIX) + "-" + tail;
+    host.toLowerCase();
+    return host;
 }
 
 // IMPROVED: Save with verification

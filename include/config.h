@@ -20,6 +20,9 @@
 #  endif
 #endif
 
+// Hostname Branding
+#define HOSTNAME_PREFIX "psai-ducky"
+
 // HID Configuration
 #define KEYBOARD_LAYOUT KEYBOARD_LAYOUT_US
 #define MOUSE_SENSITIVITY 1.0
